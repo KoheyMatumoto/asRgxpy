@@ -117,8 +117,6 @@ class SET_UI_TEXTAREA(_LABEL):
         super().__init__(x,y,txt, charcolor,bgcolor)
         self.textarea = tkinter.scrolledtext.ScrolledText(width = width_charnum, height = height_charnum ,fg=charcolor, bg=bgcolor)
 
-
-
         #ラベルなしのパターンもあってもいい
         if(txt==""):
             pass
@@ -133,6 +131,13 @@ class SET_UI_TEXTAREA(_LABEL):
         self.textarea.delete("1.0",tkinter.END)
         self.textarea.insert('end',add)
         self.textarea.update()
+
+    def make_array_from_input_bylines(self):
+        nowarray = ""
+        splitstr = self.textarea.get("1.0","end-1c")
+        nowarray = splitstr.splitlines()
+        return nowarray
+
 
 
 #ここも注意点。チェックの状況を取得するときは.checkbox.getではなく、instance.bln.get()とする
@@ -176,6 +181,9 @@ class SET_UI_PROGRESSBAR():
         else:
             self.progressbar.configure(value=self.bar_value)
             self.progressbar.update()
+
+
+        
 
 class SET_UI_messagebox():
     def __init__(self,boxtitle,messtext,type="showinfo"):

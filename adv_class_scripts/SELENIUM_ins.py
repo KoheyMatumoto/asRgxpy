@@ -81,6 +81,13 @@ class SELENIUM_ACT(BASIC_ACT):
         self.driver.get(url)
         sleep(1)
 
+    #この関数がstr系のエラーを起こしている
+    #この関数がstr系のエラーを起こしている
+    #この関数がstr系のエラーを起こしている
+    def nowurl(self):
+        res = self.driver.current_url()
+        return res
+
     def wait_for_full_load(self,timeout):
         WebDriverWait(self.driver, timeout).until(EC.presence_of_all_elements_located)
 
@@ -113,6 +120,19 @@ class SELENIUM_ACT(BASIC_ACT):
             sys.exit()
 
         return self.target
+
+    def enter_element(self,element):
+        try:
+            element.click()
+        except:
+            print("faild... click.")
+
+        try:
+            element.submit()
+        except:
+            print("faild... submit.")
+
+
 
 
     #エレメントの座標を取得し、return pos をAUTOGUIと連携することでWIN32APIによる入力
