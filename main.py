@@ -17,10 +17,12 @@ from adv_class_scripts import GSPREAD_ins
 from adv_class_scripts import AUTOGUI_ins
 from adv_class_scripts import DATAFRAME_PD_ins
 
+from adv_class_scripts import MULTI_REPLACE_ins
+
 #from adv_class_scripts import SEARCH_CONSOLE_ins
 
 
-class SET_UI():
+class SET_UI(MULTI_REPLACE_ins.MULTI_REPLACE):
     def __init__(self):
         super().__init__()
 
@@ -28,7 +30,7 @@ class SET_UI():
         self.infomation_string = "initialized_info"
         self.start_btn_flag = False
         #ウインドウ定義
-        self.main_window = UI_ins.UI_WINDOW("REPLACER",800,600,"img/backimg1.png")
+        self.main_window = UI_ins.UI_WINDOW("asRgx-py assist-search-regex REPLACER",800,600,"img/backimg1.png")
 
         #左上UI
         wp_list = [
@@ -42,14 +44,21 @@ class SET_UI():
             "Convini":"adv_class_scripts/wp_detaill_config/コンビニ_wp config.csv",        
         }
         
+        self.set_easy_searchword_dim2 =[
+            ["@@なんでも100@@","[\r\n\s\S]{0,100}?"],
+            ["@@なんでも300@@","[\r\n\s\S]{0,300}?"],
+            ["@@なんでも500@@","[\r\n\s\S]{0,500}?"],
+        ]
+        
         
         self.wp_choice = UI_ins.SET_UI_COMBO(65,125,"",wp_list,40)
         self.urlfield = UI_ins.SET_UI_TEXTAREA(65,175,"",37,14)
 
 
         self.targetstr_entry = UI_ins.SET_UI_ENTRY(70,450,"",40,True)
-
         self.replacestr_entry = UI_ins.SET_UI_ENTRY(70,500,"",40,True)
+
+        self.dict_chk = UI_ins.SET_UI_CHKBOX(70,530,"この入力欄を使用せずに置き換え定義辞書を使う",False)
 
 
         #右UI
@@ -143,12 +152,13 @@ class Galaxy(SET_UI):
 
         for i,url in enumerate(self.inputURLs):
             instance.jump(url)
-
+            self.time_entry.change_value(f"【{i+1}/{len(self.inputURLs)}】を実行中")
             print("編集画面に突入(条件クリア後は突入ボタンの定義やhtmlフィールドの定義もcsvに加える必要がある)")
             link = instance.gethtmlBySelector("li[id*='bar-edit'] a")
             instance.enter_element(link)
 
-            print("html情報を取得したい")
+            print("html情報と編集ページのURLを取得したい")
+            #編集ページのURLはこのタイミングで初出
             htmlarea = instance.gethtmlBySelector("textarea[class*=wp-editor-area]")
             thishtml = htmlarea.get_attribute("innerHTML")
             thishtml = html.unescape(thishtml)
@@ -169,28 +179,57 @@ class Galaxy(SET_UI):
             instance.hozon(True)
 
             print("[編集時間,url]となる1次元配列を作成、csvに追記")
-            editurl = instance.nowurl()
-            dt = datetime.datetime.today()
-            t = dt.time()
-            edittime = f"{dt}##{t}"
+
+            editurl = instance.getnowurl()
+
+            edittime = datetime.datetime.today()
             
             arr = [editurl,edittime]
-
-            print(arr)
-
+            #生成したタイムスタンプをcsvに送る。追記は"a",書き込みは"w"
+            functions.writecsv("logfile/log.csv","a",arr)
 
             #リミッター(解除すると全部の記事にループする)
-            if(i == 0):
-                print("テスト動作のため最初の0回目で強制終了させる")
-                return
+            #if(i == 0):
+            #    print("テスト動作のため最初の0回目で強制終了させる")
+            #    return
 
         print("動作完了")
+        self.time_entry.change_value(f"動作完了")
 
 
     def replace_move(self,string):
-        search = self.targetstr_entry.entry.get()
-        replace = self.replacestr_entry.entry.get()
-        result_html = re.sub(search,replace,string)
+        print("辞書使用☑の状況",self.dict_chk.bln.get())
+        
+        
+        if(self.dict_chk.bln.get() == True):
+            print("入力欄ではなく辞書を使用して置換を行います")
+            repdim2 = functions.opencsv("csv_replace_dict/*.csv")
+
+            result_html = string
+            for row in repdim2:
+                print(row)
+                print("で置き換えます")
+                #辞書の場合はサーチは0、リプレイスは1に入ってるのを1行ずつループする
+                search = row[0]
+                search = self.replace_by_dim2arr(search,self.set_easy_searchword_dim2)
+    
+                replace = row[1]
+
+                result_html = re.sub(search,replace,result_html)
+
+
+        else:
+            print("入力欄を使用してRgxPtnを生成します")
+            #UIから取得したワードをかんたんrgx変換辞書で成形してptnを生成する
+            search = self.targetstr_entry.entry.get()
+            search = self.replace_by_dim2arr(search,self.set_easy_searchword_dim2)
+
+            #置き換え側は記憶変数がもしあれば\1で入力するのみなのでいじらない
+            replace = self.replacestr_entry.entry.get()
+
+            print(f"【{search}】を置き換えます")
+
+            result_html = re.sub(search,replace,string)
 
         return result_html
 

@@ -81,13 +81,6 @@ class SELENIUM_ACT(BASIC_ACT):
         self.driver.get(url)
         sleep(1)
 
-    #この関数がstr系のエラーを起こしている
-    #この関数がstr系のエラーを起こしている
-    #この関数がstr系のエラーを起こしている
-    def nowurl(self):
-        res = self.driver.current_url()
-        return res
-
     def wait_for_full_load(self,timeout):
         WebDriverWait(self.driver, timeout).until(EC.presence_of_all_elements_located)
 
@@ -311,9 +304,12 @@ class WORDPRESS_SELENIUM(SELENIUM_ACT):
         pwArea = self.element_send(self.wp_login_pw_areas_selector,self.login_pw_areas_value,self.wppw)
         pwArea.submit()
 
-
-
-
+    #知らないと解法が見つからないためドハマリするエラー。
+    #current_urlのようなmethodではなくpropertyになってるやつらは()を付けるとエラーログからはまず解決できないタイプエラーを吐き出す。
+    #sys.exit()などのようにかっこをつけてはいけない！
+    def getnowurl(self):
+        cur_url = self.driver.current_url
+        return cur_url
 
     #記述を短縮するための関数
     def element_send(self,selector,attrbute_value,send_data):
