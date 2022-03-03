@@ -76,6 +76,9 @@ class SET_UI(MULTI_REPLACE_ins.MULTI_REPLACE):
         self.preurl_entry.change_value("0")
 
 
+        self.hiddensys_btn = UI_ins.SET_UI_BTN(680,5,"",lambda: self.hiddensys_act(),"*hidden*","purple","6")
+
+
 class Galaxy(SET_UI):
     def __init__(self):
         super().__init__()
@@ -232,6 +235,14 @@ class Galaxy(SET_UI):
             result_html = re.sub(search,replace,string)
 
         return result_html
+
+
+    def hiddensys_act(self):
+        print("hidden window OPEN")
+        #ここに新規ウインドウを開くmethodと、閉じられたときにインスタンスを破壊するように仕込む
+        #ウインドウにはテキストUI2つと開始ボタンをセットし、左に元テキストを入れて辞書データからの置き換えが終わったStringを
+        #右側のテキストUIに返す
+
 
 def main():
     print("メイン関数の展開実験")
