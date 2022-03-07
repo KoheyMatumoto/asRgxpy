@@ -497,11 +497,10 @@ class WORDPRESS_SELENIUM(SELENIUM_ACT):
         bassuArea = self.element_send(self.wp_bassu_areas_selector,self.bassu_areas_value,bas)
 
 
-    #name = "save"をもつwpのclassは、下書き記事のときは下書き保存で公開記事の時は青い更新ボタンを指す。
-    #そのため、この仕様であれば常にTrueを設定すればよい
-    def hozon(self,boolen=True):
+    #publishで公開、save-postで下書き保存となる
+    def hozon(self,boolen):
         if(boolen ==True):
-            hozonButton = self.driver. find_element_by_css_selector('[name="save"]')
+            hozonButton = self.driver. find_element_by_id ("publish")
         else:
             hozonButton = self.driver. find_element_by_id ("save-post")
 
