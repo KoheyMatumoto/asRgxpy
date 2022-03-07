@@ -178,8 +178,23 @@ class Galaxy(SET_UI):
             htmlarea.clear()
             instance.pastehtml(replaced_html)
 
-            print("保存ボタンを押す")
-            instance.hozon(True)
+            print("現在記事が下書きなのかどうかを察知する")
+            #id=post-status-displayのinnerhtmlを調べてみる？
+            chk_shitagaki = "NONE"
+            try:
+                chk_shitagaki = instance.gethtmlBySelector('span[id="post-status-display"]')
+            except Exception as e:
+                print("ポストステータスの察知に失敗.プログラム終了",e)
+                sys.exit()
+
+            print("保存ボタンを押す.下書きかどうかで分岐する")
+
+            if("下書" in chk_shitagaki.get_attribute("innerHTML")):
+                instance.hozon(False)
+                print("下書きとして保存します。")
+            else:
+                instance.hozon(True)
+                print("記事を公開状態で保存します。")
 
             print("[編集時間,url]となる1次元配列を作成、csvに追記")
 

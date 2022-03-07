@@ -497,7 +497,7 @@ class WORDPRESS_SELENIUM(SELENIUM_ACT):
         bassuArea = self.element_send(self.wp_bassu_areas_selector,self.bassu_areas_value,bas)
 
 
-    #publishで公開、save-postで下書き保存となる
+    #publishで公開または更新、save-postで下書き保存となる
     def hozon(self,boolen):
         if(boolen ==True):
             hozonButton = self.driver. find_element_by_id ("publish")
