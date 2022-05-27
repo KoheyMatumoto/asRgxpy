@@ -35,12 +35,12 @@ class SET_UI(MULTI_REPLACE_ins.MULTI_REPLACE):
         #左上UI
         wp_list = [
             "Mizu",
-            "Mizu1",
+            "みんさぶ",
             "Convini"
         ]
         self.wp_dict ={
             "Mizu":"adv_class_scripts/wp_detaill_config/Mizucool_wp config.csv",
-            "Mizu1":"https://mizu-cool.jp/wp-admin/",
+            "みんさぶ":"adv_class_scripts/wp_detaill_config/みんさぶ_wp config.csv",
             "Convini":"adv_class_scripts/wp_detaill_config/コンビニ_wp config.csv",        
         }
         
