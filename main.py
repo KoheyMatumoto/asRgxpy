@@ -36,12 +36,15 @@ class SET_UI(MULTI_REPLACE_ins.MULTI_REPLACE):
         wp_list = [
             "Mizu",
             "みんさぶ",
-            "Convini"
+            "Convini",
+            "SUPARI"
+
         ]
         self.wp_dict ={
             "Mizu":"adv_class_scripts/wp_detaill_config/Mizucool_wp config.csv",
             "みんさぶ":"adv_class_scripts/wp_detaill_config/みんさぶ_wp config.csv",
             "Convini":"adv_class_scripts/wp_detaill_config/コンビニ_wp config.csv",        
+            "SUPARI":"adv_class_scripts/wp_detaill_config/SUPARI_wp config.csv"
         }
         
         self.set_easy_searchword_dim2 =[
@@ -108,6 +111,17 @@ class Galaxy(SET_UI):
         instance = SELENIUM_ins.WORDPRESS_SELENIUM(wp_config_dim2=wp_dim2)
         instance.try_login_wp()
 
+        #supariのみ年齢認証がある
+        if(nowwp =="SUPARI"):
+            print("年齢認証できるか？")
+            try:
+                yesbtn = instance.gethtmlBySelector("button[id='agy-accept']")
+                instance.enter_element(yesbtn)
+                print("年齢認証クリア")
+            except:
+                print("年齢認証失敗。終了")
+                return
+
         if(flag ==True and self.start_btn_flag ==True):
             print("緑ボタンかつプレビューが完了しています。ループ実行へ進みます。")
             pass
@@ -122,6 +136,7 @@ class Galaxy(SET_UI):
             instance.jump(self.inputURLs[n])
             print("編集画面に突入(条件クリア後は突入ボタンの定義やhtmlフィールドの定義もcsvに加える必要がある)")
             link = instance.gethtmlBySelector("li[id*='bar-edit'] a")
+
             instance.enter_element(link)
 
             print("html情報を取得したい")
